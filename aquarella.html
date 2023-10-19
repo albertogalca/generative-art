@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+      }
+      canvas {
+        background-color: #faedcd;
+        border: 20px solid #fff;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 800; // Adjust the canvas width as desired
+      canvas.height = 1200; // Adjust the canvas height as desired
+
+      const colors = ["#223843", "#eff1f3", "#dbd3d8", "#d8b4a0", "#d77a61"];
+
+      const waveAmplitude = 1; // Adjust the wave amplitude as desired
+      const waveFrequency = 0.001; // Adjust the wave frequency as desired
+      const frameWidth = 0; // Adjust the frame width as desired
+
+      function getRandomColor() {
+        return colors[Math.floor(Math.random() * colors.length)];
+      }
+
+      function drawWave(yOffset) {
+        const startX = frameWidth;
+        const endX = canvas.width - frameWidth;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, yOffset);
+
+        for (let x = startX; x <= endX; x++) {
+          const yOffsetValue = waveAmplitude * Math.sin(x * waveFrequency);
+          const y = yOffset + yOffsetValue;
+          ctx.lineTo(x, y);
+
+        }
+
+        ctx.lineWidth = Math.random() + 10;
+        ctx.strokeStyle = getRandomColor();
+        ctx.stroke();
+      }
+
+      function drawFrame() {
+        // Draw the frame
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, frameWidth);
+        ctx.fillRect(0, canvas.height - frameWidth, canvas.width, frameWidth);
+
+        // Draw waves within the frame
+        const frameHeight = canvas.height - 2 * frameWidth;
+        const numWaves = frameHeight / (waveAmplitude * 0.04);
+
+        for (let i = 0; i < numWaves; i++) {
+          const yOffset = frameWidth + i * waveAmplitude * 0.05;
+          drawWave(yOffset);
+        }
+      }
+
+      drawFrame();
+    </script>
+  </body>
+</html>

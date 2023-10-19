@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      #canvas-container {
+        position: relative;
+        padding: 1rem;
+      }
+      canvas {
+        background-color: #BCA37F;
+        width: 100vw;
+        height: 100vh;
+      }
+      h1 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #BCA37F;
+        font-size: 48px;
+        text-align: center;
+        width: 40%;
+        font-family: 'Young Serif', serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
+      <h1>
+        One day, if you put in the effort, the results will come to
+        light
+      </h1>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/noisejs@2.1.0/index.min.js"></script>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const c1 = [188, 163, 127];
+      const c2 = [255, 242, 216];
+
+      var noise = new Noise();
+
+      function EmmitParticle(x, y, z, c, iterations, speed) {
+        let xCur = x;
+        let yCur = y;
+        let xPrev = x;
+        let yPrev = y;
+
+        for (let i = 0; i < iterations; i++) {
+          const eff = noise.perlin3(xCur, yCur, z);
+          const angleEff = Math.PI * 2 * eff;
+          xCur += Math.cos(angleEff) * speed;
+          yCur += Math.sin(angleEff) * speed;
+
+          if (Math.abs(xCur) > 1 || Math.abs(yCur) > 1) {
+            return;
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(xPrev * canvas.width, yPrev * canvas.height);
+          ctx.lineTo(xCur * canvas.width, yCur * canvas.height);
+          ctx.strokeStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.4)`;
+          ctx.lineWidth = 0.3;
+          ctx.stroke();
+
+          xPrev = xCur;
+          yPrev = yCur;
+        }
+      }
+
+      function animate() {
+        const z = Math.random() * 1000;
+        const t = Array.from({ length: 200 }, (_, i) => -1 + (i * 2) / 149);
+        const y = t.map((x) => Math.sin(x * Math.PI));
+
+        for (let i = 0; i < t.length; i++) {
+          EmmitParticle(t[i], y[i], z, c2, 60, 0.007);
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
